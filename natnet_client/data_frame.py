@@ -261,6 +261,7 @@ class DataFrame(PacketComponent):
         for field in fields(cls):
             print(f"field name: {field.name}")
             if rigid_bodies_reached:
+                kwargs[field.name] = None
                 continue
             if field.name == "rigid_bodies":
                 rigid_bodies_reached = True
