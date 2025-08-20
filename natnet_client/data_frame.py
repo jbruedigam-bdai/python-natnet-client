@@ -171,13 +171,13 @@ class ForcePlate(PacketComponent):
 
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "ForcePlate":
-        id_num = buffer.read_int32()
+        id_num = buffer.read_int16()
         print(f"id_num: {id_num}")
-        channel_count = buffer.read_int32()
+        channel_count = buffer.read_int16()
         print(f"channel_count: {channel_count}")
         for _ in range(channel_count):
             print("reading channel")
-            val = buffer.read_int32()
+            val = buffer.read_int16()
             print(f"val {val}")
             buffer.read_float32_array(val)
         channel_arrays = tuple(buffer.read_float32_array(buffer.read_int32()) for _ in range(channel_count))
@@ -280,8 +280,7 @@ class DataFrame(PacketComponent):
                     element_count = buffer.read_int32()
                     print(f"element_count: {element_count}")
                     generic_type = field.type.__args__[0]
-                    if field.name != "force_plates":
-                        data_size = buffer.read_int32()
+                    data_size = buffer.read_int32()
                     if generic_type == Vec3:
                         print("in if2")
                         kwargs[field.name] = tuple(buffer.read_float32_array(3) for _ in range(element_count))
