@@ -58,6 +58,8 @@ class RigidBody(PacketComponent):
         id_num = buffer.read_int32()
         pos = buffer.read_float32_array(3)
         rot = buffer.read_float32_array(4)
+        print(pos)
+        print(rot)
         # RB Marker Data ( Before version 3.0.  After Version 3.0 Marker data is in description )
         if protocol_version < Version(3, 0):
             marker_count = buffer.read_int32()
@@ -278,7 +280,8 @@ class DataFrame(PacketComponent):
                     element_count = buffer.read_int32()
                     print(f"element_count: {element_count}")
                     generic_type = field.type.__args__[0]
-                    data_size = buffer.read_int32()
+                    if field.type != "force_plates":
+                        data_size = buffer.read_int32()
                     if generic_type == Vec3:
                         print("in if2")
                         kwargs[field.name] = tuple(buffer.read_float32_array(3) for _ in range(element_count))
