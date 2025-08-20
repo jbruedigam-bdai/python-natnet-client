@@ -256,9 +256,14 @@ class DataFrame(PacketComponent):
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "DataFrame":
         kwargs = {}
+        rigid_bodies_reached = False
 
         for field in fields(cls):
             print(f"field name: {field.name}")
+            if rigid_bodies_reached:
+                continue
+            if field.name == "rigid_bodies":
+                rigid_bodies_reached = True
             if protocol_version >= cls.MIN_VERSIONS[field.name]:
                 print(f"field type: {field.type}")
                 if isclass(field.type) and issubclass(field.type, PacketComponent):
@@ -270,8 +275,8 @@ class DataFrame(PacketComponent):
                     # Type is a tuple
                     element_count = buffer.read_int32()
                     print(f"element_count: {element_count}")
-                    data_size = buffer.read_int32()
                     generic_type = field.type.__args__[0]
+                    data_size = buffer.read_int32()
                     if generic_type == Vec3:
                         print("in if2")
                         kwargs[field.name] = tuple(buffer.read_float32_array(3) for _ in range(element_count))
