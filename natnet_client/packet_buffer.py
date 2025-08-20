@@ -34,6 +34,9 @@ class PacketBuffer:
 
     def read_uint16(self) -> int:
         return self.read("H")[0]
+    
+    def read_int16(self) -> int:
+        return self.read("h")[0]
 
     def read_uint32(self) -> int:
         return self.read("I")[0]
@@ -44,6 +47,9 @@ class PacketBuffer:
 
     def read_uint64(self) -> int:
         return self.read("L")[0]
+
+    def read_int64(self) -> int:
+        return self.read("l")[0]
 
     def read_float32(self) -> float:
         return self.read("f")[0]

@@ -15,7 +15,7 @@ class MarkerSetDescription(PacketComponent, NamedTuple(
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "MarkerSetDescription":
         name = buffer.read_string()
 
-        marker_count = buffer.read_uint32()
+        marker_count = buffer.read_int32()
         marker_names = [buffer.read_string() for _ in range(marker_count)]
         return MarkerSetDescription(name, tuple(marker_names))
 
@@ -29,9 +29,9 @@ class RigidBodyMarkerDescription(PacketComponentArray, NamedTuple(
     @classmethod
     def read_array_from_buffer(cls, buffer: PacketBuffer,
                                protocol_version: Version) -> "Tuple[RigidBodyMarkerDescription, ...]":
-        marker_count = buffer.read_uint32()
+        marker_count = buffer.read_int32()
         pos = [buffer.read_float32_array(3) for _ in range(marker_count)]
-        active_labels = [buffer.read_uint32() for _ in range(marker_count)]
+        active_labels = [buffer.read_int32() for _ in range(marker_count)]
         names = [buffer.read_string() for _ in range(marker_count)] if protocol_version >= Version(4) else \
             [None] * marker_count
         return tuple(RigidBodyMarkerDescription(*a) for a in zip(names, active_labels, pos))
@@ -50,8 +50,8 @@ class RigidBodyDescription(PacketComponent, NamedTuple(
         # Version 2.0 or higher
         name = buffer.read_string() if protocol_version >= Version(2) else None
 
-        new_id = buffer.read_uint32()
-        parent_id = buffer.read_uint32()
+        new_id = buffer.read_int32()
+        parent_id = buffer.read_int32()
         pos = buffer.read_float32_array(3)
 
         # Version 3.0 and higher, rigid body marker information contained in description
@@ -72,8 +72,8 @@ class SkeletonDescription(PacketComponent, NamedTuple(
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "SkeletonDescription":
         name = buffer.read_string()
-        new_id = buffer.read_uint32()
-        rigid_body_count = buffer.read_uint32()
+        new_id = buffer.read_int32()
+        rigid_body_count = buffer.read_int32()
 
         # Loop over all Rigid Bodies
         rigid_body_descs = [
@@ -98,7 +98,7 @@ class ForcePlateDescription(PacketComponent, NamedTuple(
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> Optional["ForcePlateDescription"]:
         if protocol_version >= Version(3):
-            new_id = buffer.read_uint32()
+            new_id = buffer.read_int32()
             serial_number = buffer.read_string()
             width = buffer.read_float32()
             length = buffer.read_float32()
@@ -110,9 +110,9 @@ class ForcePlateDescription(PacketComponent, NamedTuple(
             corners_flat = buffer.read_float32_array(3 * 3)
             corners = [corners_flat[i * 3:(i + 1) * 3] for i in range(3)]
 
-            plate_type = buffer.read_uint32()
-            channel_data_type = buffer.read_uint32()
-            num_channels = buffer.read_uint32()
+            plate_type = buffer.read_int32()
+            channel_data_type = buffer.read_int32()
+            num_channels = buffer.read_int32()
 
             channels = [buffer.read_string() for _ in range(num_channels)]
 
@@ -135,12 +135,12 @@ class DeviceDescription(PacketComponent, NamedTuple(
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> Optional["DeviceDescription"]:
         if protocol_version >= Version(3):
-            new_id = buffer.read_uint32()
+            new_id = buffer.read_int32()
             name = buffer.read_string()
             serial_number = buffer.read_string()
-            device_type = buffer.read_uint32()
-            channel_data_type = buffer.read_uint32()
-            num_channels = buffer.read_uint32()
+            device_type = buffer.read_int32()
+            channel_data_type = buffer.read_int32()
+            num_channels = buffer.read_int32()
 
             # Channel Names list of NoC strings
             channel_names = [buffer.read_string() for _ in range(num_channels)]
@@ -186,9 +186,9 @@ class DataDescriptions(PacketComponent, NamedTuple("DataDescriptions", (
         }
         data_dict = {n: [] for i, (n, f) in data_desc_types.items()}
         # # of data sets to process
-        dataset_count = buffer.read_uint32()
+        dataset_count = buffer.read_int32()
         for i in range(0, dataset_count):
-            data_type = buffer.read_uint32()
+            data_type = buffer.read_int32()
             if data_type in data_desc_types:
                 name, desc_type = data_desc_types[data_type]
                 unpacked_data = desc_type.read_from_buffer(buffer, protocol_version)

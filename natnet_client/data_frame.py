@@ -56,16 +56,16 @@ class RigidBody(PacketComponent):
 
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "RigidBody":
-        id_num = buffer.read_uint32()
+        id_num = buffer.read_int32()
         pos = buffer.read_float32_array(3)
         rot = buffer.read_float32_array(4)
         # RB Marker Data ( Before version 3.0.  After Version 3.0 Marker data is in description )
         if protocol_version < Version(3, 0):
-            marker_count = buffer.read_uint32()
+            marker_count = buffer.read_int32()
             marker_positions = [buffer.read_float32_array(3) for _ in range(marker_count)]
 
             if protocol_version >= Version(2):
-                marker_ids = [buffer.read_uint32() for _ in range(marker_count)]
+                marker_ids = [buffer.read_int32() for _ in range(marker_count)]
                 marker_sizes = [buffer.read_float32() for _ in range(marker_count)]
             else:
                 marker_ids = marker_sizes = [None for _ in range(marker_count)]
@@ -80,7 +80,7 @@ class RigidBody(PacketComponent):
 
         # Version 2.6 and later
         if protocol_version >= Version(2, 6):
-            param = buffer.read_uint16()
+            param = buffer.read_int16()
             tracking_valid = (param & 0x01) != 0
         else:
             tracking_valid = None
@@ -95,8 +95,8 @@ class Skeleton(PacketComponent):
 
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "Skeleton":
-        id_num = buffer.read_uint32()
-        rigid_body_count = buffer.read_uint32()
+        id_num = buffer.read_int32()
+        rigid_body_count = buffer.read_int32()
         rigid_bodies = [RigidBody.read_from_buffer(buffer, protocol_version) for _ in range(rigid_body_count)]
 
         return Skeleton(id_num, tuple(rigid_bodies))
@@ -112,13 +112,13 @@ class LabeledMarker(PacketComponent):
 
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "LabeledMarker":
-        id_num = buffer.read_uint32()
+        id_num = buffer.read_int32()
         pos = buffer.read_float32_array(3)
         size = buffer.read_float32()
 
         # Version 2.6 and later
         if protocol_version >= Version(2, 6):
-            param = buffer.read_uint16()
+            param = buffer.read_int16()
         else:
             param = None
 
@@ -170,9 +170,9 @@ class ForcePlate(PacketComponent):
 
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "ForcePlate":
-        id_num = buffer.read_uint32()
-        channel_count = buffer.read_uint32()
-        channel_arrays = tuple(buffer.read_float32_array(buffer.read_uint32()) for _ in range(channel_count))
+        id_num = buffer.read_int32()
+        channel_count = buffer.read_int32()
+        channel_arrays = tuple(buffer.read_float32_array(buffer.read_int32()) for _ in range(channel_count))
         return ForcePlate(id_num, channel_arrays)
 
 
@@ -183,9 +183,9 @@ class Device(PacketComponent):
 
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "Device":
-        id_num = buffer.read_uint32()
-        channel_count = buffer.read_uint32()
-        channel_arrays = tuple(buffer.read_float32_array(buffer.read_uint32()) for _ in range(channel_count))
+        id_num = buffer.read_int32()
+        channel_count = buffer.read_int32()
+        channel_arrays = tuple(buffer.read_float32_array(buffer.read_int32()) for _ in range(channel_count))
         return Device(id_num, channel_arrays)
 
 
@@ -204,8 +204,8 @@ class FrameSuffix(PacketComponent):
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "FrameSuffix":
         # Timecode
-        timecode = buffer.read_uint32()
-        timecode_sub = buffer.read_uint32()
+        timecode = buffer.read_int32()
+        timecode_sub = buffer.read_int32()
 
         # Timestamp (increased to double precision in 2.7 and later)
         if protocol_version >= Version(2, 7):
@@ -215,14 +215,14 @@ class FrameSuffix(PacketComponent):
 
         # Hires Timestamp (Version 3.0 and later)
         if protocol_version >= Version(3):
-            stamp_camera_mid_exposure = buffer.read_uint64()
-            stamp_data_received = buffer.read_uint64()
-            stamp_transmit = buffer.read_uint64()
+            stamp_camera_mid_exposure = buffer.read_int64()
+            stamp_data_received = buffer.read_int64()
+            stamp_transmit = buffer.read_int64()
         else:
             stamp_camera_mid_exposure = stamp_data_received = stamp_transmit = None
 
         # Frame parameters
-        param = buffer.read_uint16()
+        param = buffer.read_int16()
         is_recording = (param & 0x01) != 0
         tracked_models_changed = (param & 0x02) != 0
 
@@ -265,7 +265,7 @@ class DataFrame(PacketComponent):
                     kwargs[field.name] = field.type.read_from_buffer(buffer, protocol_version)
                 else:
                     # Type is a tuple
-                    element_count = buffer.read_uint32()
+                    element_count = buffer.read_int32()
                     generic_type = field.type.__args__[0]
                     if generic_type == Vec3:
                         kwargs[field.name] = tuple(buffer.read_float32_array(3) for _ in range(element_count))
