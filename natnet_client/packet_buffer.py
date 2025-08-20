@@ -28,7 +28,7 @@ class PacketBuffer:
         return str_dec
 
     def read(self, data_type: Union[struct.Struct, str]) -> Tuple[Any, ...]:
-        print(f"read_struct, ptr: {self.pointer}")
+        print(f"read_struct ({data_type}), ptr: {self.pointer}")
         if isinstance(data_type, str):
             data_type = struct.Struct(data_type)
         values = data_type.unpack_from(self.__data, offset=self.pointer)
