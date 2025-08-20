@@ -252,6 +252,7 @@ class DataFrame(PacketComponent):
         kwargs = {}
 
         for field in fields(cls):
+            print(field.name)
             if protocol_version >= cls.MIN_VERSIONS[field.name]:
                 if isclass(field.type) and issubclass(field.type, PacketComponent):
                     kwargs[field.name] = field.type.read_from_buffer(buffer, protocol_version)
