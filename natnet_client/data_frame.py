@@ -170,9 +170,9 @@ class ForcePlate(PacketComponent):
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "ForcePlate":
         id_num = buffer.read_int32()
-        print(id_num)
+        print(f"id_num: {id_num}")
         channel_count = buffer.read_int32()
-        print(channel_count)
+        print(f"channel_count: {channel_count}")
         for _ in range(channel_count):
             print("reading channel")
             val = buffer.read_int32()

@@ -4,7 +4,7 @@ from typing import Optional, Union, Tuple, Any
 
 class PacketBuffer:
     def __init__(self, data: bytes):
-        # print(' '.join(f'{x:02x}' for x in data))
+        print(' '.join(f'{x:02x}' for x in data))
         self.__data = memoryview(data)  # Using a memoryview here ensures that slices do not create copies
         self.pointer = 0
 
