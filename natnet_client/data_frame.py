@@ -15,7 +15,7 @@ class FramePrefix(PacketComponent):
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "FramePrefix":
         val = buffer.read_int32()
-        print(f"frame {val}")
+        # print(f"frame {val}")
         return FramePrefix(val)
 
 
@@ -27,9 +27,9 @@ class MarkerSet(PacketComponent):
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "MarkerSet":
         model_name = buffer.read_string()
-        print(f"model_name: {model_name}")
+        # print(f"model_name: {model_name}")
         marker_count = buffer.read_int32()
-        print(f"marker_count: {marker_count}")
+        # print(f"marker_count: {marker_count}")
         # for i in range(marker_count):
         #     print(f"marker {i}: {buffer.read_float32_array(3)}")
         marker_pos_list = [buffer.read_float32_array(3) for _ in range(marker_count)]
@@ -258,25 +258,25 @@ class DataFrame(PacketComponent):
         kwargs = {}
 
         for field in fields(cls):
-            print(f"field name: {field.name}")
+            # print(f"field name: {field.name}")
             if protocol_version >= cls.MIN_VERSIONS[field.name]:
-                print(f"field type: {field.type}")
+                # print(f"field type: {field.type}")
                 if isclass(field.type) and issubclass(field.type, PacketComponent):
-                    print("in if")
+                    # print("in if")
                     kwargs[field.name] = field.type.read_from_buffer(buffer, protocol_version)
-                    print(kwargs[field.name])
+                    # print(kwargs[field.name])
                 else:
-                    print("in el")
+                    # print("in el")
                     # Type is a tuple
                     element_count = buffer.read_int32()
-                    print(f"element_count: {element_count}")
+                    # print(f"element_count: {element_count}")
                     data_size = buffer.read_int32()
                     generic_type = field.type.__args__[0]
                     if generic_type == Vec3:
-                        print("in if2")
+                        # print("in if2")
                         kwargs[field.name] = tuple(buffer.read_float32_array(3) for _ in range(element_count))
                     else:
-                        print(f"in el2, {generic_type}")
+                        # print(f"in el2, {generic_type}")
                         kwargs[field.name] = tuple(
                             generic_type.read_from_buffer(buffer, protocol_version) for _ in range(element_count))
             else:
