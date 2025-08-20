@@ -14,7 +14,9 @@ class FramePrefix(PacketComponent):
 
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "FramePrefix":
-        return FramePrefix(buffer.read_int32())
+        val = buffer.read_int32()
+        print(val)
+        return FramePrefix(val)
 
 
 @dataclass(frozen=True)
