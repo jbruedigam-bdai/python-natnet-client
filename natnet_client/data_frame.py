@@ -26,6 +26,11 @@ class MarkerSet(PacketComponent):
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "MarkerSet":
         model_name = buffer.read_string()
         marker_count = buffer.read_uint32()
+        print(model_name)
+        print(marker_count)
+        for i in range(marker_count):
+            print(i)
+            print(buffer.read_float32_array(3))
         marker_pos_list = [buffer.read_float32_array(3) for _ in range(marker_count)]
         return MarkerSet(model_name, tuple(marker_pos_list))
 
