@@ -26,13 +26,12 @@ class MarkerSet(PacketComponent):
 
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "MarkerSet":
-        buffer.pointer += 4
         model_name = buffer.read_string()
         print(f"model_name: {model_name}")
         marker_count = buffer.read_int32()
         print(f"marker_count: {marker_count}")
-        for i in range(marker_count):
-            print(f"marker {i}: {buffer.read_float32_array(3)}")
+        # for i in range(marker_count):
+        #     print(f"marker {i}: {buffer.read_float32_array(3)}")
         marker_pos_list = [buffer.read_float32_array(3) for _ in range(marker_count)]
         return MarkerSet(model_name, tuple(marker_pos_list))
 
@@ -271,6 +270,7 @@ class DataFrame(PacketComponent):
                     # Type is a tuple
                     element_count = buffer.read_int32()
                     print(f"element_count: {element_count}")
+                    data_size = buffer.read_int32()
                     generic_type = field.type.__args__[0]
                     if generic_type == Vec3:
                         print("in if2")
