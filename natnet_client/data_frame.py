@@ -26,6 +26,7 @@ class MarkerSet(PacketComponent):
 
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "MarkerSet":
+        buffer.pointer += 4
         model_name = buffer.read_string()
         print(f"model_name: {model_name}")
         marker_count = buffer.read_int32()
