@@ -38,6 +38,10 @@ class PacketBuffer:
     def read_uint32(self) -> int:
         return self.read("I")[0]
 
+    def read_int32(self) -> int:
+        """Read a signed 32-bit integer from the buffer."""
+        return self.read("i")[0]
+
     def read_uint64(self) -> int:
         return self.read("L")[0]
 

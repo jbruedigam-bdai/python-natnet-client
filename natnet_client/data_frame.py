@@ -14,7 +14,7 @@ class FramePrefix(PacketComponent):
 
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "FramePrefix":
-        return FramePrefix(buffer.read_uint32())
+        return FramePrefix(buffer.read_int32())
 
 
 @dataclass(frozen=True)
@@ -25,7 +25,7 @@ class MarkerSet(PacketComponent):
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "MarkerSet":
         model_name = buffer.read_string()
-        marker_count = buffer.read_uint32()
+        marker_count = buffer.read_int32()
         print(model_name)
         print(marker_count)
         for i in range(marker_count):
