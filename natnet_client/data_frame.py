@@ -261,9 +261,13 @@ class DataFrame(PacketComponent):
         for field in fields(cls):
             print(field.name)
             if protocol_version >= cls.MIN_VERSIONS[field.name]:
+                print(field.type)
                 if isclass(field.type) and issubclass(field.type, PacketComponent):
+                    print("in if")
                     kwargs[field.name] = field.type.read_from_buffer(buffer, protocol_version)
+                    print(kwargs[field.name])
                 else:
+                    print("in el")
                     # Type is a tuple
                     element_count = buffer.read_int32()
                     generic_type = field.type.__args__[0]
