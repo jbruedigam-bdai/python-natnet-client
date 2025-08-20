@@ -38,28 +38,28 @@ class PacketBuffer:
         return values
 
     def read_uint16(self) -> int:
-        return self.read("<H")[0]
+        return self.read("H")[0]
     
     def read_int16(self) -> int:
-        return self.read("<h")[0]
+        return self.read("h")[0]
 
     def read_uint32(self) -> int:
-        return self.read("<I")[0]
+        return self.read("I")[0]
 
     def read_int32(self) -> int:
-        return self.read("<i")[0]
+        return self.read("i")[0]
 
     def read_uint64(self) -> int:
-        return self.read("<Q")[0]
+        return self.read("Q")[0]
 
     def read_int64(self) -> int:
-        return self.read("<q")[0]
+        return self.read("q")[0]
 
     def read_float32(self) -> float:
-        return self.read("<f")[0]
+        return self.read("f")[0]
 
     def read_float32_array(self, count: int) -> Tuple[float, ...]:
-        return self.read("<f" * count)
+        return self.read("f" * count)
 
     def read_float64(self) -> float:
-        return self.read("<d")[0]
+        return self.read("d")[0]
