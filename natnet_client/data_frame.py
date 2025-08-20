@@ -275,7 +275,7 @@ class DataFrame(PacketComponent):
                         print("in if2")
                         kwargs[field.name] = tuple(buffer.read_float32_array(3) for _ in range(element_count))
                     else:
-                        print("in el2")
+                        print(f"in el2, {generic_type}")
                         kwargs[field.name] = tuple(
                             generic_type.read_from_buffer(buffer, protocol_version) for _ in range(element_count))
             else:
