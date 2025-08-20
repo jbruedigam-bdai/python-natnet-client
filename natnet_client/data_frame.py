@@ -26,6 +26,7 @@ class MarkerSet(PacketComponent):
 
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "MarkerSet":
+        data_size = buffer.read_int32()
         model_name = buffer.read_string()
         print(f"model_name: {model_name}")
         marker_count = buffer.read_int32()
@@ -55,6 +56,7 @@ class RigidBody(PacketComponent):
 
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "RigidBody":
+        data_size = buffer.read_int32()
         id_num = buffer.read_int32()
         pos = buffer.read_float32_array(3)
         rot = buffer.read_float32_array(4)
@@ -94,6 +96,7 @@ class Skeleton(PacketComponent):
 
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "Skeleton":
+        data_size = buffer.read_int32()
         id_num = buffer.read_int32()
         rigid_body_count = buffer.read_int32()
         rigid_bodies = [RigidBody.read_from_buffer(buffer, protocol_version) for _ in range(rigid_body_count)]
@@ -111,6 +114,7 @@ class LabeledMarker(PacketComponent):
 
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "LabeledMarker":
+        data_size = buffer.read_int32()
         id_num = buffer.read_int32()
         pos = buffer.read_float32_array(3)
         size = buffer.read_float32()
@@ -169,6 +173,7 @@ class ForcePlate(PacketComponent):
 
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "ForcePlate":
+        data_size = buffer.read_int32()
         id_num = buffer.read_int32()
         channel_count = buffer.read_int32()
         channel_arrays = tuple(buffer.read_float32_array(buffer.read_int32()) for _ in range(channel_count))
@@ -182,6 +187,7 @@ class Device(PacketComponent):
 
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "Device":
+        data_size = buffer.read_int32()
         id_num = buffer.read_int32()
         channel_count = buffer.read_int32()
         channel_arrays = tuple(buffer.read_float32_array(buffer.read_int32()) for _ in range(channel_count))
@@ -256,15 +262,9 @@ class DataFrame(PacketComponent):
     @classmethod
     def read_from_buffer(cls, buffer: PacketBuffer, protocol_version: Version) -> "DataFrame":
         kwargs = {}
-        rigid_bodies_reached = False
 
         for field in fields(cls):
             print(f"field name: {field.name}")
-            if rigid_bodies_reached:
-                kwargs[field.name] = None
-                continue
-            if field.name == "rigid_bodies":
-                rigid_bodies_reached = True
             if protocol_version >= cls.MIN_VERSIONS[field.name]:
                 print(f"field type: {field.type}")
                 if isclass(field.type) and issubclass(field.type, PacketComponent):
@@ -277,7 +277,6 @@ class DataFrame(PacketComponent):
                     element_count = buffer.read_int32()
                     print(f"element_count: {element_count}")
                     generic_type = field.type.__args__[0]
-                    data_size = buffer.read_int32()
                     if generic_type == Vec3:
                         print("in if2")
                         kwargs[field.name] = tuple(buffer.read_float32_array(3) for _ in range(element_count))
