@@ -269,10 +269,13 @@ class DataFrame(PacketComponent):
                     print("in el")
                     # Type is a tuple
                     element_count = buffer.read_int32()
+                    print(f"element_count: {element_count}")
                     generic_type = field.type.__args__[0]
                     if generic_type == Vec3:
+                        print("in if2")
                         kwargs[field.name] = tuple(buffer.read_float32_array(3) for _ in range(element_count))
                     else:
+                        print("in el2")
                         kwargs[field.name] = tuple(
                             generic_type.read_from_buffer(buffer, protocol_version) for _ in range(element_count))
             else:
