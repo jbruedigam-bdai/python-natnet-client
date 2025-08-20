@@ -12,6 +12,7 @@ class PacketBuffer:
         return self.__data
 
     def read_string(self, max_length: Optional[int] = None, static_length: bool = False) -> str:
+        print(f"read_string, ptr: {self.pointer}")
         if max_length is None:
             data_slice = self.__data[self.pointer:]
         else:
@@ -23,13 +24,16 @@ class PacketBuffer:
             self.pointer += max_length
         else:
             self.pointer += len(str_enc) + 1
+        print(f"read_string end, ptr: {self.pointer}")
         return str_dec
 
     def read(self, data_type: Union[struct.Struct, str]) -> Tuple[Any, ...]:
+        print(f"read_struct, ptr: {self.pointer}")
         if isinstance(data_type, str):
             data_type = struct.Struct(data_type)
         values = data_type.unpack_from(self.__data, offset=self.pointer)
         self.pointer += data_type.size
+        print(f"read_struct end, ptr: {self.pointer}")
         return values
 
     def read_uint16(self) -> int:
