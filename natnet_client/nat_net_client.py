@@ -45,7 +45,7 @@ class NatNetClient:
     def __init__(self, server_ip_address: str = "127.0.0.1", local_ip_address: str = "127.0.0.1",
                  multicast_address: str = "239.255.42.99", command_port: int = 1510, data_port: int = 1511,
                  use_multicast: bool = True):
-        # print("Initializing NatNetClient")
+        print("Initializing NatNetClient")
         self.__server_ip_address = server_ip_address
         self.__local_ip_address = local_ip_address
         self.__multicast_address = multicast_address
@@ -140,8 +140,8 @@ class NatNetClient:
     def __process_message(self, buffer: PacketBuffer):
         message_id = buffer.read_int16()
         packet_size = buffer.read_int16()
-        # print(message_id)
-        # print(packet_size)
+        print(message_id)
+        print(packet_size)
         if len(buffer.data) - 4 != packet_size:
             print(f"Warning: actual packet size ({len(buffer.data) - 4}) not consistent with packet size in the "
                   f"header ({packet_size})")
