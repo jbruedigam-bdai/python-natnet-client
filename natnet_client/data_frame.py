@@ -280,7 +280,7 @@ class DataFrame(PacketComponent):
                     element_count = buffer.read_int32()
                     print(f"element_count: {element_count}")
                     generic_type = field.type.__args__[0]
-                    if field.type != "force_plates":
+                    if field.name != "force_plates":
                         data_size = buffer.read_int32()
                     if generic_type == Vec3:
                         print("in if2")
